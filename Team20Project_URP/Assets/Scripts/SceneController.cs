@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class SceneController : MonoBehaviour
 {
@@ -28,4 +28,5 @@ public class SceneController : MonoBehaviour
         Application.Quit();
         Debug.Log("Game Quit!");
     }
+    
 }  

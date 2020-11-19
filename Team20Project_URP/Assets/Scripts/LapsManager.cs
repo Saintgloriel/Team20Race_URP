@@ -1,49 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LapsManager : MonoBehaviour
 {
     private GameController gameController;
 
     private int currentCheckpointIndex = 0;
-    private int scores = 0;
-    private int lapsDone = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         gameController = FindObjectOfType<GameController>();
-
         currentCheckpointIndex = 0;
-        scores = 0;
-        lapsDone = 0;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        CheckCheckpoint(other);
+    }
+
+    /// <summary>
+    /// Проверяет пройден ли круг и начисляет очки за успешное прохождение
+    /// </summary>
+    /// <param name="other">Коллайдер триггер с которым проверяется столкновение</param>
+    private void CheckCheckpoint(Collider other)
+    {
         int contactedColliderIndex = GetCheckpointIndex(other);
-        Debug.Log($"contactedColliderIndex - {contactedColliderIndex}");
-        Debug.Log($"currentCheckpointIndex - {currentCheckpointIndex}");
-        Debug.Log("--------------");
 
         if (currentCheckpointIndex < contactedColliderIndex)
         {
             currentCheckpointIndex = contactedColliderIndex;
-            //Debug.Log($"currentCheckpointIndex - {currentCheckpointIndex}");
         }
         else if (contactedColliderIndex == 0 &&
                  currentCheckpointIndex == gameController.P1Checkpoints.Length - 1)
         {
             currentCheckpointIndex = contactedColliderIndex;
-            lapsDone++;
-            scores += 10;
-            //Debug.Log($"currentCheckpointIndex - {currentCheckpointIndex}");
-            Debug.Log($"lapsDone - {lapsDone}");
-            Debug.Log($"scores - {scores}");
+            AddScores();
         }
     }
-
 
     /// <summary>
     /// Возвращает индекс чекпоинта с которым произошло столкновение
@@ -73,8 +66,37 @@ public class LapsManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Collider does not exist in P1Checkpoints and P2Checkpoints");
         return 0;
 
+    }
+
+    /// <summary>
+    /// Начисляет очки за прошедший круг
+    /// </summary>
+    private void AddScores()
+    {
+        if (gameObject.tag == "Player")
+        {
+            if (gameController.P1Scores < gameController.GoalScores)
+            {
+                gameController.P1Scores += gameController.PointsPerLap;
+            }
+            else
+            {
+                gameController.P1Scores = gameController.GoalScores;
+            }
+        }
+
+        if (gameObject.tag == "Player2")
+        {
+            if (gameController.P2Scores < gameController.GoalScores)
+            {
+                gameController.P2Scores += gameController.PointsPerLap;
+            }
+            else
+            {
+                gameController.P2Scores = gameController.GoalScores;
+            }
+        }
     }
 }
